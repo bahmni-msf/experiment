@@ -1,0 +1,14 @@
+{
+    "nested" : {
+        "path" : "patients",
+        "query" : {
+            "bool" : {
+                "must" : [
+                    {
+                        "match" : {"patients.id" : "12"}
+                    }
+                ]
+            }
+        }
+    }
+}

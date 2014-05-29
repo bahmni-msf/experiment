@@ -16,9 +16,8 @@ public class ANCImporter {
         csvFile.openForRead();
 
         ANCRowMapper ancRowMapper = new ANCRowMapper();
-        ANCRow csvRow = null;
+        ANCRow csvRow;
         while((csvRow = csvFile.readEntity()) != null) {
-            System.out.println(csvRow);
             Household household = ancRowMapper.map(csvRow);
             allHouseholds.addOrUpdate(household);
         }

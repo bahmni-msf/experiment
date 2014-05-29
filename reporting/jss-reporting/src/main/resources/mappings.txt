@@ -1,0 +1,12 @@
+{
+    "household" : {
+        "properties" : {
+            "patients" : {
+                "type" : "nested",
+                "properties": {
+                    "id" : {"type": "string"}
+                }
+            }
+        }
+    }
+}

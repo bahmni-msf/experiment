@@ -8,8 +8,9 @@ import java.util.List;
 public class Household {
     public String cluster;
     public String id;
-
-    @JsonIgnore
+    public String villagename;
+    public String postOffice;
+    public String tehsil;
     public List<Patient> patients = new ArrayList<Patient>();
 
     public void addPatient(Patient patient) {
@@ -19,5 +20,12 @@ public class Household {
     @JsonIgnore
     public Patient getFirstPatient() {
         return patients.get(0);
+    }
+
+    public boolean hasPatientWithId(String id) {
+        for (Patient patient : patients) {
+            if (patient.id.equals(id)) return true;
+        }
+        return false;
     }
 }
