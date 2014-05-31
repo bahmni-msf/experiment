@@ -24,6 +24,8 @@ public class AllHouseholdsTest {
     @Test
     public void findByPatient() throws Exception {
         AllHouseholds allHouseholds = new AllHouseholds();
+        Household household = createHousehold("12");
+        allHouseholds.addOrUpdate(household);
         SearchResult searchResult = allHouseholds.findByPatientId("12");
         assertEquals(1, searchResult.getHits(Household.class).size());
     }

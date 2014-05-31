@@ -12,6 +12,7 @@ public class Household {
     public String postOffice;
     public String tehsil;
     public List<Patient> patients = new ArrayList<Patient>();
+    public String villageid;
 
     public void addPatient(Patient patient) {
         patients.add(patient);

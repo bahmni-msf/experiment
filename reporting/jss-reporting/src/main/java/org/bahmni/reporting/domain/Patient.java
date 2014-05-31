@@ -5,8 +5,5 @@ public class Patient {
     public String householdId;
     public String membername;
     public String husbandname;
-    public String villagename;
-    public String postOffice;
-    public String tehsil;
-    public String cluster;
+    public String membernum;
 }

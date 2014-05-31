@@ -1,14 +1,14 @@
 {
-    "nested" : {
-        "path" : "patients",
-        "query" : {
-            "bool" : {
-                "must" : [
-                    {
-                        "match" : {"patients.id" : "12"}
-                    }
-                ]
+   "query": {
+      "filtered": {
+         "query": {
+            "match_all": {}
+         },
+         "filter": {
+            "term": {
+               "patients.id": "12"
             }
-        }
-    }
+         }
+      }
+   }
 }
