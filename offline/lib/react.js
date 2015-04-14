@@ -5967,7 +5967,7 @@ function ReactComponent(props, context) {
  * @final
  * @protected
  */
-ReactComponent.prototype.setState = function(partialState, callback) {
+ReactComponent.prototype.setState = function (partialState:Object) {
   ("production" !== "development" ? invariant(
     typeof partialState === 'object' ||
     typeof partialState === 'function' ||
