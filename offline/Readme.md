@@ -6,12 +6,12 @@ in network it should sync all the data back to the backend and maintain consiste
 of data while doing the same. 
 
 ### Requirement
-The Bahmni front-end should work offline on various platforms when accessed via different methods
-    Platforms
-        * Google Chrome (Any Operating System)
-        * Firefox (Any Operating System)
-        * Google Chrome Application (On Desktops)
-        * Android Application (Android 4.1.2 +)
+The Bahmni front-end should work offline on various platforms when accessed via different methods.
+#### Platforms
+* Google Chrome (Any Operating System)
+* Firefox (Any Operating System)
+* Google Chrome Application (On Desktops)
+* Android Application (Android 4.1.2 +)
 The UI should be consistent across all platforms and use of APIs by the front-end on all platforms should
 remain the same.
 
