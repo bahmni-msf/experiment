@@ -7,7 +7,7 @@ of data while doing the same.
 
 ### Requirement
 The Bahmni front-end should work offline on various platforms when accessed via different methods
-    **Platforms**
+    Platforms
         * Google Chrome (Any Operating System)
         * Firefox (Any Operating System)
         * Google Chrome Application (On Desktops)
@@ -94,8 +94,8 @@ Check this out for some more code - https://github.com/Bhamni/openmrs-module-bah
 
 
 ### Resources (Further Reading)
-Service Workers - http://www.html5rocks.com/en/tutorials/service-worker/introduction/
-Crosswalk - https://crosswalk-project.org/
-IndexedDB - http://demo.agektmr.com/storage/
-Chrome Offline Storage - https://developer.chrome.com/apps/offline_storage
-Offline Storage - http://www.html5rocks.com/en/tutorials/offline/quota-research/
+* Service Workers - http://www.html5rocks.com/en/tutorials/service-worker/introduction/
+* Crosswalk - https://crosswalk-project.org/
+* IndexedDB - http://demo.agektmr.com/storage/
+* Chrome Offline Storage - https://developer.chrome.com/apps/offline_storage
+* Offline Storage - http://www.html5rocks.com/en/tutorials/offline/quota-research/
