@@ -24,7 +24,7 @@ import java.util.Date;
 public class SendAndReceiveAMessage {
 
     public static void main(String[] args) throws Exception {
-        int port = 104;
+        int port = 8080;
         HL7Service server = new SimpleServer(port, new MinLowerLayerProtocol(), new PipeParser());
         Application handler = new DefaultApplication();
         server.registerApplication("ORU", "001", handler);
@@ -32,22 +32,22 @@ public class SendAndReceiveAMessage {
         server.registerApplication("*", "*", handler);
 
         server.registerConnectionListener(
-            new ConnectionListener() {
-                @Override
-                public void connectionReceived(Connection connection) {
-                    System.out.println("New connection received: " + connection.getRemoteAddress().toString());
-                }
+                new ConnectionListener() {
+                    @Override
+                    public void connectionReceived(Connection connection) {
+                        System.out.println("New connection received: " + connection.getRemoteAddress().toString());
+                    }
 
-                @Override
-                public void connectionDiscarded(Connection connection) {
-                    System.out.println("Lost connection from: " + connection.getRemoteAddress().toString());
-                }
-        });
+                    @Override
+                    public void connectionDiscarded(Connection connection) {
+                        System.out.println("Lost connection from: " + connection.getRemoteAddress().toString());
+                    }
+                });
         server.start();
 
         //Creating client to accept Message i.e PACS server here
         ConnectionHub connectionHub = ConnectionHub.getInstance();
-        Connection newClientConnection = connectionHub.attach("localhost",port,new PipeParser(),SendAndReceiveAMessage.class);
+        Connection newClientConnection = connectionHub.attach("localhost",port,new PipeParser(),MinLowerLayerProtocol.class);
         Initiator initiator = newClientConnection.getInitiator();
         Message response = initiator.sendAndReceive(getORMMessage());
         System.out.print(response);
@@ -97,7 +97,7 @@ public class SendAndReceiveAMessage {
         // note that we are just sending modality here, not the device location
         obr.getPlacerField2().setValue("HH");
         obr.getQuantityTiming().getPriority().setValue("STAT");
-        obr.getScheduledDateTime().getTimeOfAnEvent().setValue(HL7Utils.getHl7DateFormat().format("08-07-2015"));
+        obr.getScheduledDateTime().getTimeOfAnEvent().setValue(HL7Utils.getHl7DateFormat().format(new Date()));
 
         // break the reason for study up by lines
         obr.getReasonForStudy(0).getText().setValue("line");
