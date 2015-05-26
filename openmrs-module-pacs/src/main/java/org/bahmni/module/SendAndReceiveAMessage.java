@@ -5,7 +5,6 @@ import ca.uhn.hl7v2.app.Application;
 import ca.uhn.hl7v2.app.Connection;
 import ca.uhn.hl7v2.app.ConnectionHub;
 import ca.uhn.hl7v2.app.ConnectionListener;
-import ca.uhn.hl7v2.app.DefaultApplication;
 import ca.uhn.hl7v2.app.HL7Service;
 import ca.uhn.hl7v2.app.Initiator;
 import ca.uhn.hl7v2.app.SimpleServer;
@@ -26,7 +25,7 @@ public class SendAndReceiveAMessage {
     public static void main(String[] args) throws Exception {
         int port = 8080;
         HL7Service server = new SimpleServer(port, new MinLowerLayerProtocol(), new PipeParser());
-        Application handler = new DefaultApplication();
+        Application handler = new ExampleApplication();
         server.registerApplication("ORU", "001", handler);
         server.registerApplication("ORM", "001", handler);
         server.registerApplication("*", "*", handler);
@@ -49,8 +48,12 @@ public class SendAndReceiveAMessage {
         ConnectionHub connectionHub = ConnectionHub.getInstance();
         Connection newClientConnection = connectionHub.attach("localhost",port,new PipeParser(),MinLowerLayerProtocol.class);
         Initiator initiator = newClientConnection.getInitiator();
+        int timeout = 3000000;
+        System.setProperty("ca.uhn.hl7v2.app.initiator.timeout",Integer.toString(timeout));
         Message response = initiator.sendAndReceive(getORMMessage());
-        System.out.print(response);
+        String responseString = new PipeParser().encode(response);
+
+        System.out.println("Received response:\n" + responseString);
         newClientConnection.close();
         server.stop();
 
