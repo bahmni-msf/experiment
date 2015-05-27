@@ -23,7 +23,14 @@ import java.util.Date;
 public class SendAndReceiveAMessage {
 
     public static void main(String[] args) throws Exception {
-        int port = 8080;
+        String host = "localhost";
+        int port = 8042;
+        if(args.length > 0) {
+            host = args[0];
+            port = Integer.parseInt(args[1]);
+        }
+        int timeout = 3000000;
+
         HL7Service server = new SimpleServer(port, new MinLowerLayerProtocol(), new PipeParser());
         Application handler = new ExampleApplication();
         server.registerApplication("ORU", "001", handler);
@@ -46,9 +53,8 @@ public class SendAndReceiveAMessage {
 
         //Creating client to accept Message i.e PACS server here
         ConnectionHub connectionHub = ConnectionHub.getInstance();
-        Connection newClientConnection = connectionHub.attach("localhost",port,new PipeParser(),MinLowerLayerProtocol.class);
+        Connection newClientConnection = connectionHub.attach(host,port,new PipeParser(),MinLowerLayerProtocol.class);
         Initiator initiator = newClientConnection.getInitiator();
-        int timeout = 3000000;
         System.setProperty("ca.uhn.hl7v2.app.initiator.timeout",Integer.toString(timeout));
         Message response = initiator.sendAndReceive(getORMMessage());
         String responseString = new PipeParser().encode(response);
@@ -64,6 +70,7 @@ public class SendAndReceiveAMessage {
 
         // handle the MSH component
         MSH msh = message.getMSH();
+        msh.getMessageControlID().setValue("M01");
         HL7Utils.populateMessageHeader(msh, new Date(), "ORM", "O01", "Bahmni EMR");
 
         // handle the patient PID component
@@ -71,7 +78,7 @@ public class SendAndReceiveAMessage {
         pid.getPatientIDInternalID(0).getID().setValue("GAN0001");
         pid.getPatientName(0).getFamilyName().setValue("Gond");
         pid.getPatientName(0).getGivenName().setValue("Ramesh");
-        pid.getDateOfBirth().getTimeOfAnEvent().setValue("08-08-2012");
+        pid.getDateOfBirth().getTimeOfAnEvent().setValue("20120830");
         pid.getSex().setValue("M");
         // TODO: do we need patient admission ID / account number
 
