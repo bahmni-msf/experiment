@@ -94,15 +94,16 @@ public class SendAndReceiveAMessage {
 
         // handle ORC component
         ORC orc = message.getORDER().getORC();
+        orc.getPlacerOrderNumber(0).getEntityIdentifier().setValue("A00");
+        orc.getFillerOrderNumber().getEntityIdentifier().setValue("B00");
+        orc.getEnteredBy().getGivenName().setValue("Bahmni");
         orc.getOrderControl().setValue("NW");
 
         // handle OBR component
         OBR obr = message.getORDER().getORDER_DETAIL().getOBR();
-        obr.getPlacerOrderNumber(0).getUniversalID().setValue("A01");
-        obr.getPlacerOrderNumber(0).getNamespaceID().setValue("A01");
         obr.getUniversalServiceIdentifier().getIdentifier().setValue("Chest lordotic xray");
         obr.getUniversalServiceIdentifier().getText().setValue("Chest lordotic xray");
-        obr.getFillerOrderNumber().getEntityIdentifier().setValue("ORNO1");
+//        obr.getFillerOrderNumber().getEntityIdentifier().setValue("ORNO1");
 
         // note that we are just sending modality here, not the device location
         obr.getPlacerField2().setValue("CR");
