@@ -108,7 +108,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>org.bahmni.module.SendAndReceiveAMessage</mainClass>
+                            <mainClass>org.bahmni.module.hl7.SendAndReceiveAMessage</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
