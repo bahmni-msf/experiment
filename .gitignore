@@ -5,3 +5,4 @@ target/
 *.log
 data/
 *.csv
+.DS_Store

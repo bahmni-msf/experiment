@@ -68,9 +68,9 @@ public class SendAndReceiveAMessage {
 
         // handle the patient PID component
         PID pid = message.getPATIENT().getPID();
-        pid.getPatientIDInternalID(0).getID().setValue("GAN0'001");
-        pid.getPatientName().getFamilyName().setValue("Gond");
-        pid.getPatientName().getGivenName().setValue("Ramesh");
+        pid.getPatientIDInternalID(0).getID().setValue("GAN0001");
+        pid.getPatientName(0).getFamilyName().setValue("Gond");
+        pid.getPatientName(0).getGivenName().setValue("Ramesh");
         pid.getDateOfBirth().getTimeOfAnEvent().setValue("08-08-2012");
         pid.getSex().setValue("M");
         // TODO: do we need patient admission ID / account number
