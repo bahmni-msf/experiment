@@ -14,6 +14,7 @@
 
 package org.bahmni.module;
 
+import ca.uhn.hl7v2.AcknowledgmentCode;
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.v23.message.ACK;
 import ca.uhn.hl7v2.model.v23.segment.MSH;
@@ -29,9 +30,10 @@ public class HL7Utils {
     }
 
     public static MSH populateMessageHeader(MSH msh, Date dateTime, String messageType, String triggerEvent, String sendingFacility) throws DataTypeException {
-
         msh.getFieldSeparator().setValue("|");
         msh.getEncodingCharacters().setValue("^~\\&");
+        msh.getSendingFacility().getHd1_NamespaceID().setValue(sendingFacility);
+        msh.getSendingFacility().getUniversalID().setValue(sendingFacility);
         msh.getSendingFacility().getNamespaceID().setValue(sendingFacility);
         msh.getDateTimeOfMessage().getTimeOfAnEvent().setValue(getHl7DateFormat().format(dateTime));
         msh.getMessageType().getMessageType().setValue(messageType);
@@ -44,19 +46,17 @@ public class HL7Utils {
     }
 
     public static ACK generateACK(String messageControlId, String sendingFacility) throws DataTypeException {
-
         ACK ack = new ACK();
 
         populateMessageHeader(ack.getMSH(), new Date(), "ACK", null, sendingFacility);
 
-        ack.getMSA().getAcknowledgementCode().setValue("AA");
+        ack.getMSA().getAcknowledgementCode().setValue(AcknowledgmentCode.AA.getMessage());
         ack.getMSA().getMessageControlID().setValue(messageControlId);
 
         return ack;
     }
 
     public static ACK generateErrorACK(String messageControlId, String sendingFacility, String errorMessage) throws DataTypeException {
-
         ACK ack = new ACK();
 
         populateMessageHeader(ack.getMSH(), new Date(), "ACK", null, sendingFacility);
