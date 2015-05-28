@@ -14,21 +14,12 @@
         <log4jVersion>1.2.17</log4jVersion>
         <slf4jVersion>1.7.12</slf4jVersion>
         <hapi-base.version>2.2</hapi-base.version>
+        <dcm4cheVersion>2.0.28</dcm4cheVersion>
+        <dcm4che2Version>2.0.23</dcm4che2Version>
     </properties>
 
 
     <dependencies>
-        <!--<dependency>-->
-            <!--<groupId>ca.uhn.hapi</groupId>-->
-            <!--<artifactId>hapi</artifactId>-->
-            <!--<version>${hapi-base.version}</version>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>org.springframework</groupId>-->
-            <!--<artifactId>spring-tx</artifactId>-->
-            <!--<version>3.0.5.RELEASE</version>-->
-            <!--<scope>provided</scope>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>ca.uhn.hapi</groupId>
             <artifactId>hapi-base</artifactId>
@@ -44,12 +35,6 @@
             <artifactId>hapi-structures-v251</artifactId>
             <version>${hapi-base.version}</version>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>ca.uhn.hapi</groupId>-->
-            <!--<artifactId>hapi-hl7overhttp</artifactId>-->
-            <!--<version>${hapi-base.version}</version>-->
-        <!--</dependency>-->
-
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
@@ -61,18 +46,18 @@
             <version>${log4jVersion}</version>
         </dependency>
 
-        <!-- Dcm4chee toolkit depenndancies for dcmof, hl7snd and dcmrcv (never used) -->
-        <!--<dependency>-->
-            <!--<groupId>dcm4che</groupId>-->
-            <!--<artifactId>dcm4che-net</artifactId>-->
-            <!--<version>${dcm4che2Version}</version>-->
-        <!--</dependency>-->
+         <!--Dcm4chee toolkit depenndancies for dcmof, hl7snd and dcmrcv (never used)-->
+        <dependency>
+            <groupId>dcm4che</groupId>
+            <artifactId>dcm4che-net</artifactId>
+            <version>${dcm4che2Version}</version>
+        </dependency>
 
-        <!--<dependency>-->
-            <!--<groupId>dcm4che</groupId>-->
-            <!--<artifactId>dcm4che-core</artifactId>-->
-            <!--<version>${dcm4che2Version}</version>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>dcm4che</groupId>
+            <artifactId>dcm4che-core</artifactId>
+            <version>${dcm4che2Version}</version>
+        </dependency>
 
         <!--<dependency>-->
             <!--<groupId>dcm4che</groupId>-->
@@ -93,11 +78,17 @@
             <!--<version>${dcm4cheVersion}</version>-->
         <!--</dependency>-->
 
-        <!--<dependency>-->
-            <!--<groupId>org.dcm4che.tool</groupId>-->
-            <!--<artifactId>dcm4che-tool-common</artifactId>-->
-            <!--<version>${dcm4cheVersion}</version>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>org.dcm4che.tool</groupId>
+            <artifactId>dcm4che-tool-common</artifactId>
+            <version>3.2.0</version>
+        </dependency>
+
+        <dependency>
+            <artifactId>dcm4che-tool</artifactId>
+            <groupId>dcm4che.tool</groupId>
+            <version>2.0.28</version>
+        </dependency>
 
     </dependencies>
 
@@ -148,11 +139,11 @@
 
 
     <repositories>
-        <!--<repository>-->
-            <!--<id>dcm4che</id>-->
-            <!--<name>dcm4che Repository</name>-->
-            <!--<url>http://www.dcm4che.org/maven2</url>-->
-        <!--</repository>-->
+        <repository>
+            <id>dcm4che</id>
+            <name>dcm4che Repository</name>
+            <url>http://www.dcm4che.org/maven2</url>
+        </repository>
         <repository>
             <id>hapi-sf</id>
             <name>HAPI Sourceforge Repository</name>
