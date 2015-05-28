@@ -78,17 +78,17 @@
             <!--<version>${dcm4cheVersion}</version>-->
         <!--</dependency>-->
 
-        <dependency>
-            <groupId>org.dcm4che.tool</groupId>
-            <artifactId>dcm4che-tool-common</artifactId>
-            <version>3.2.0</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.dcm4che.tool</groupId>-->
+            <!--<artifactId>dcm4che-tool-common</artifactId>-->
+            <!--<version>3.2.0</version>-->
+        <!--</dependency>-->
 
-        <dependency>
-            <artifactId>dcm4che-tool</artifactId>
-            <groupId>dcm4che.tool</groupId>
-            <version>2.0.28</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<artifactId>dcm4che-tool</artifactId>-->
+            <!--<groupId>dcm4che.tool</groupId>-->
+            <!--<version>2.0.28</version>-->
+        <!--</dependency>-->
 
     </dependencies>
 
@@ -99,7 +99,8 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>org.bahmni.module.hl7.SendAndReceiveAMessage</mainClass>
+                            <!--<mainClass>org.bahmni.module.hl7.SendAndReceiveAMessage</mainClass>-->
+                            <mainClass>org.bahmni.module.dicom.DicomReceiver</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
