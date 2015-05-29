@@ -7,6 +7,7 @@ import ca.uhn.hl7v2.app.ConnectionListener;
 import ca.uhn.hl7v2.app.HL7Service;
 import ca.uhn.hl7v2.app.Initiator;
 import ca.uhn.hl7v2.app.SimpleServer;
+import ca.uhn.hl7v2.llp.LLPException;
 import ca.uhn.hl7v2.llp.MinLowerLayerProtocol;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v23.message.ORM_O01;
@@ -18,14 +19,17 @@ import ca.uhn.hl7v2.model.v23.segment.PV1;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
 
+import java.io.IOException;
 import java.util.Date;
 
 public class SendAndReceiveAMessage {
 
     public static void main(String[] args) throws Exception {
         String host = "localhost";
-        int port = 8042;
-        int timeout = 3000;
+        String remoteHost = "10.0.0.25";
+        int port = 9000;
+        int remotePort = 1235;
+        int timeout = 300000;
 
         if (args.length > 0) {
             host = args[0];
@@ -39,22 +43,26 @@ public class SendAndReceiveAMessage {
 
         HL7Service server = new SimpleServer(port, new MinLowerLayerProtocol(), new PipeParser());
         ReceivingApplication serverSideOrderHandler = new ORMHandler();
+        ReceivingApplication bahmniORUHandler = new ORUHandler();
         server.registerApplication("ORM", "001", serverSideOrderHandler);
-        server.registerApplication("*", "*", serverSideOrderHandler);
+        server.registerApplication("ORU", "R01", bahmniORUHandler);
         server.registerConnectionListener(
-                new ConnectionListener() {
-                    @Override
-                    public void connectionReceived(Connection connection) {
-                        System.out.println("New connection received: " + connection.getRemoteAddress().toString());
-                    }
+            new ConnectionListener() {
+                @Override
+                public void connectionReceived(Connection connection) {
+                    System.out.println("New connection received: " + connection.getRemoteAddress().toString());
+                }
 
-                    @Override
-                    public void connectionDiscarded(Connection connection) {
-                        System.out.println("Lost connection from: " + connection.getRemoteAddress().toString());
-                    }
-                });
+                @Override
+                public void connectionDiscarded(Connection connection) {
+                    System.out.println("Lost connection from: " + connection.getRemoteAddress().toString());
+                }
+            });
         server.start();
 
+    }
+
+    public void createOrder(String host, int port) throws HL7Exception, LLPException, IOException {
         //Creating client to accept Message i.e PACS server here
         ConnectionHub connectionHub = ConnectionHub.getInstance();
         Connection newClientConnection = connectionHub.attach(host, port, new PipeParser(), MinLowerLayerProtocol.class);
@@ -64,7 +72,6 @@ public class SendAndReceiveAMessage {
 
         System.out.println("Received response:\n" + responseString);
         newClientConnection.close();
-        server.stop();
     }
 
     public static Message createRadiologyOrderMessage() throws HL7Exception {
