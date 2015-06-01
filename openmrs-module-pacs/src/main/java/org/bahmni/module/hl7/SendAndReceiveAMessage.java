@@ -25,14 +25,29 @@ import java.io.IOException;
 import java.util.Date;
 
 public class SendAndReceiveAMessage {
-
     private static final org.apache.log4j.Logger log = Logger.getLogger(SendAndReceiveAMessage.class);
+
+    private final String host;
+    private final int port;
+    private final int timeout;
+    private final String remoteHost;
+    private int remotePort;
+
+    public SendAndReceiveAMessage(String host, int port, int timeout, String remoteHost, int remotePort) {
+        this.host = host;
+        this.port = port;
+        this.timeout = timeout;
+        this.remoteHost = remoteHost;
+        this.remotePort = remotePort;
+    }
 
     public static void main(String[] args) throws Exception {
         String host = "localhost";
-        String remoteHost = "10.0.0.25";
         int port = 9000;
+
+        String remoteHost = "10.0.0.25";
         int remotePort = 1235;
+
         int timeout = 300000;
 
         if (args.length > 0) {
@@ -42,17 +57,21 @@ public class SendAndReceiveAMessage {
             if (args.length >= 3)
                 timeout = Integer.parseInt(args[2]);
         }
-        log.debug(host + ":" + port + ":" + timeout);
-        System.setProperty("ca.uhn.hl7v2.app.initiator.timeout", Integer.toString(timeout));
 
-//        HL7Service server = new SimpleServer(port, new MinLowerLayerProtocol(), new PipeParser());
+        SendAndReceiveAMessage sendAndReceiveAMessage = new SendAndReceiveAMessage(host, port, timeout, remoteHost, remotePort);
+        sendAndReceiveAMessage.createServer(port);
+        sendAndReceiveAMessage.createRemoteOrder(remoteHost, remotePort);
+//        sendAndReceiveAMessage.createLocalOrder(host, port);
+    }
+
+    private void createServer(int port) throws InterruptedException {
+        //        HL7Service server = new SimpleServer(port, new MinLowerLayerProtocol(), new PipeParser());
         HapiContext hapiContext = new DefaultHapiContext();
         HL7Service server = hapiContext.newServer(port, false);
         ReceivingApplication serverSideOrderHandler = new ORMHandler();
         ReceivingApplication bahmniORUHandler = new ORUHandler();
         server.registerApplication("ORM", "001", serverSideOrderHandler);
         server.registerApplication("ORU", "R01", bahmniORUHandler);
-//        server.registerApplication(bahmniORUHandler);
         server.setExceptionHandler(new ErrorHandler());
         server.registerConnectionListener(
             new ConnectionListener() {
@@ -67,8 +86,16 @@ public class SendAndReceiveAMessage {
                 }
             });
         server.startAndWait();
+        System.setProperty("ca.uhn.hl7v2.app.initiator.timeout", Integer.toString(timeout));
 
-        Connection newClientConnection = hapiContext.newClient("127.0.0.1", port, false);
+        log.debug("Started server at " + host + ":" + port + " with timeout of " + timeout);
+    }
+
+    private void createLocalOrder(String host, int port) throws HL7Exception, LLPException, IOException {
+        log.debug("Sending create order message to " + host + " server at port " + port);
+
+        HapiContext hapiContext = new DefaultHapiContext();
+        Connection newClientConnection = hapiContext.newClient(host, port, false);
         Initiator initiator = newClientConnection.getInitiator();
         Message response = initiator.sendAndReceive(createRadiologyOrderMessage());
         String responseString = new PipeParser().encode(response);
@@ -77,10 +104,10 @@ public class SendAndReceiveAMessage {
         newClientConnection.close();
     }
 
-    public void createOrder(String host, int port) throws HL7Exception, LLPException, IOException {
+    public void createRemoteOrder(String remoteHost, int remotePort) throws HL7Exception, LLPException, IOException {
         //Creating client to accept Message i.e PACS server here
         ConnectionHub connectionHub = ConnectionHub.getInstance();
-        Connection newClientConnection = connectionHub.attach(host, port, new PipeParser(), MinLowerLayerProtocol.class);
+        Connection newClientConnection = connectionHub.attach(remoteHost, remotePort, new PipeParser(), MinLowerLayerProtocol.class);
         Initiator initiator = newClientConnection.getInitiator();
         Message response = initiator.sendAndReceive(createRadiologyOrderMessage());
         String responseString = new PipeParser().encode(response);
