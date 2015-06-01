@@ -6,21 +6,24 @@ import ca.uhn.hl7v2.model.v23.message.ORM_O01;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
 import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.util.Map;
 
 public class ORMHandler implements ReceivingApplication {
+    private static final org.apache.log4j.Logger log = Logger.getLogger(ORMHandler.class);
+
     @Override
     public Message processMessage(Message message, Map<String, Object> theMetadata) throws ReceivingApplicationException, HL7Exception {
         ORM_O01 ormMessage = (ORM_O01) message;
         String messageControlId = ormMessage.getMSH().getMessageControlID().getValue();
         String sendingFacility = ormMessage.getMSH().getSendingFacility().getName();
-        System.out.println("messagecontrolid:'" + messageControlId + "'");
-        System.out.println("facility:'" + sendingFacility + "'");
+        log.debug("messagecontrolid:'" + messageControlId + "'");
+        log.debug("facility:'" + sendingFacility + "'");
 
         String encodedMessage = new PipeParser().encode(message);
-        System.out.println("Received message:\n" + encodedMessage + "\n\n");
+        log.debug("Received message:\n" + encodedMessage + "\n\n");
         try {
             return message.generateACK();
         } catch (IOException e) {

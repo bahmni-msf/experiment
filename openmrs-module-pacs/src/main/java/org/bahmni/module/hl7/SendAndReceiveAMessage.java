@@ -1,12 +1,13 @@
 package org.bahmni.module.hl7;
 
+import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.app.Connection;
 import ca.uhn.hl7v2.app.ConnectionHub;
 import ca.uhn.hl7v2.app.ConnectionListener;
 import ca.uhn.hl7v2.app.HL7Service;
 import ca.uhn.hl7v2.app.Initiator;
-import ca.uhn.hl7v2.app.SimpleServer;
 import ca.uhn.hl7v2.llp.LLPException;
 import ca.uhn.hl7v2.llp.MinLowerLayerProtocol;
 import ca.uhn.hl7v2.model.Message;
@@ -18,11 +19,14 @@ import ca.uhn.hl7v2.model.v23.segment.PID;
 import ca.uhn.hl7v2.model.v23.segment.PV1;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.util.Date;
 
 public class SendAndReceiveAMessage {
+
+    private static final org.apache.log4j.Logger log = Logger.getLogger(SendAndReceiveAMessage.class);
 
     public static void main(String[] args) throws Exception {
         String host = "localhost";
@@ -38,28 +42,39 @@ public class SendAndReceiveAMessage {
             if (args.length >= 3)
                 timeout = Integer.parseInt(args[2]);
         }
-        System.out.println(host + ":" + port + ":" + timeout);
+        log.debug(host + ":" + port + ":" + timeout);
         System.setProperty("ca.uhn.hl7v2.app.initiator.timeout", Integer.toString(timeout));
 
-        HL7Service server = new SimpleServer(port, new MinLowerLayerProtocol(), new PipeParser());
+//        HL7Service server = new SimpleServer(port, new MinLowerLayerProtocol(), new PipeParser());
+        HapiContext hapiContext = new DefaultHapiContext();
+        HL7Service server = hapiContext.newServer(port, false);
         ReceivingApplication serverSideOrderHandler = new ORMHandler();
         ReceivingApplication bahmniORUHandler = new ORUHandler();
         server.registerApplication("ORM", "001", serverSideOrderHandler);
         server.registerApplication("ORU", "R01", bahmniORUHandler);
+//        server.registerApplication(bahmniORUHandler);
+        server.setExceptionHandler(new ErrorHandler());
         server.registerConnectionListener(
             new ConnectionListener() {
                 @Override
                 public void connectionReceived(Connection connection) {
-                    System.out.println("New connection received: " + connection.getRemoteAddress().toString());
+                    log.debug("New connection received: " + connection.getRemoteAddress().toString());
                 }
 
                 @Override
                 public void connectionDiscarded(Connection connection) {
-                    System.out.println("Lost connection from: " + connection.getRemoteAddress().toString());
+                    log.debug("Lost connection from: " + connection.getRemoteAddress().toString());
                 }
             });
-        server.start();
+        server.startAndWait();
 
+        Connection newClientConnection = hapiContext.newClient("127.0.0.1", port, false);
+        Initiator initiator = newClientConnection.getInitiator();
+        Message response = initiator.sendAndReceive(createRadiologyOrderMessage());
+        String responseString = new PipeParser().encode(response);
+
+        log.debug("Received response:\n" + responseString);
+        newClientConnection.close();
     }
 
     public void createOrder(String host, int port) throws HL7Exception, LLPException, IOException {
@@ -70,7 +85,7 @@ public class SendAndReceiveAMessage {
         Message response = initiator.sendAndReceive(createRadiologyOrderMessage());
         String responseString = new PipeParser().encode(response);
 
-        System.out.println("Received response:\n" + responseString);
+        log.debug("Received response:\n" + responseString);
         newClientConnection.close();
     }
 
