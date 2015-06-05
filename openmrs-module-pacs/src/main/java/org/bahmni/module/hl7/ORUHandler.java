@@ -2,7 +2,7 @@ package org.bahmni.module.hl7;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.model.v23.message.ORU_R01;
+import ca.uhn.hl7v2.model.v25.message.ORU_R01;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
 import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.util.Map;
 
 public class ORUHandler implements ReceivingApplication {
-
     private static final org.apache.log4j.Logger log = Logger.getLogger(ORUHandler.class);
 
     @Override
@@ -25,7 +24,7 @@ public class ORUHandler implements ReceivingApplication {
 
             String messageControlID = oruR01.getMSH().getMessageControlID().getValue();
             String sendingFacility = oruR01.getMSH().getSendingFacility().getName();
-            String patientIdentifier = oruR01.getRESPONSE().getPATIENT().getPID().getPatientIDInternalID(0).getID().getValue();
+            String patientIdentifier = oruR01.getPATIENT_RESULT().getPATIENT().getPID().getPatientIdentifierList(0).getIDNumber().getValue();
             log.debug("messagecontrolid:'" + messageControlID + "'");
             log.debug("facility:'" + sendingFacility + "'");
             log.debug("Patient Id:'" + patientIdentifier + "'");

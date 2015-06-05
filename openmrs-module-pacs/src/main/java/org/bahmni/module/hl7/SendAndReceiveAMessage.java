@@ -12,13 +12,12 @@ import ca.uhn.hl7v2.llp.LLPException;
 import ca.uhn.hl7v2.llp.MinLowerLayerProtocol;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v23.message.ORM_O01;
-import ca.uhn.hl7v2.model.v23.segment.MSH;
-import ca.uhn.hl7v2.model.v23.segment.OBR;
-import ca.uhn.hl7v2.model.v23.segment.ORC;
-import ca.uhn.hl7v2.model.v23.segment.PID;
-import ca.uhn.hl7v2.model.v23.segment.PV1;
+import ca.uhn.hl7v2.model.v25.segment.MSH;
+import ca.uhn.hl7v2.model.v25.segment.OBR;
+import ca.uhn.hl7v2.model.v25.segment.ORC;
+import ca.uhn.hl7v2.model.v25.segment.PID;
+import ca.uhn.hl7v2.model.v25.segment.PV1;
 import ca.uhn.hl7v2.parser.PipeParser;
-import ca.uhn.hl7v2.protocol.ReceivingApplication;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -30,15 +29,11 @@ public class SendAndReceiveAMessage {
     private final String host;
     private final int port;
     private final int timeout;
-    private final String remoteHost;
-    private int remotePort;
 
-    public SendAndReceiveAMessage(String host, int port, int timeout, String remoteHost, int remotePort) {
+    public SendAndReceiveAMessage(String host, int port, int timeout) {
         this.host = host;
         this.port = port;
         this.timeout = timeout;
-        this.remoteHost = remoteHost;
-        this.remotePort = remotePort;
     }
 
     public static void main(String[] args) throws Exception {
@@ -58,20 +53,18 @@ public class SendAndReceiveAMessage {
                 timeout = Integer.parseInt(args[2]);
         }
 
-        SendAndReceiveAMessage sendAndReceiveAMessage = new SendAndReceiveAMessage(host, port, timeout, remoteHost, remotePort);
-        sendAndReceiveAMessage.createServer(port);
-        sendAndReceiveAMessage.createRemoteOrder(remoteHost, remotePort);
+        SendAndReceiveAMessage sendAndReceiveAMessage = new SendAndReceiveAMessage(host, port, timeout);
+        sendAndReceiveAMessage.startServer();
+//        sendAndReceiveAMessage.createRemoteOrder(remoteHost, remotePort);
 //        sendAndReceiveAMessage.createLocalOrder(host, port);
     }
 
-    private void createServer(int port) throws InterruptedException {
+    private void startServer() throws InterruptedException {
         //        HL7Service server = new SimpleServer(port, new MinLowerLayerProtocol(), new PipeParser());
         HapiContext hapiContext = new DefaultHapiContext();
         HL7Service server = hapiContext.newServer(port, false);
-        ReceivingApplication serverSideOrderHandler = new ORMHandler();
-        ReceivingApplication bahmniORUHandler = new ORUHandler();
-        server.registerApplication("ORM", "001", serverSideOrderHandler);
-        server.registerApplication("ORU", "R01", bahmniORUHandler);
+        server.registerApplication("ORM", "001", new ORMHandler());
+        server.registerApplication("ORU", "R01", new ORUHandler());
         server.setExceptionHandler(new ErrorHandler());
         server.registerConnectionListener(
             new ConnectionListener() {
@@ -106,14 +99,18 @@ public class SendAndReceiveAMessage {
 
     public void createRemoteOrder(String remoteHost, int remotePort) throws HL7Exception, LLPException, IOException {
         //Creating client to accept Message i.e PACS server here
-        ConnectionHub connectionHub = ConnectionHub.getInstance();
-        Connection newClientConnection = connectionHub.attach(remoteHost, remotePort, new PipeParser(), MinLowerLayerProtocol.class);
-        Initiator initiator = newClientConnection.getInitiator();
-        Message response = initiator.sendAndReceive(createRadiologyOrderMessage());
-        String responseString = new PipeParser().encode(response);
+        Connection newClientConnection = null;
+        try {
+            ConnectionHub connectionHub = ConnectionHub.getInstance();
+            newClientConnection = connectionHub.attach(remoteHost, remotePort, new PipeParser(), MinLowerLayerProtocol.class);
+            Initiator initiator = newClientConnection.getInitiator();
+            Message response = initiator.sendAndReceive(createRadiologyOrderMessage());
+            String responseString = new PipeParser().encode(response);
 
-        log.debug("Received response:\n" + responseString);
-        newClientConnection.close();
+            log.debug("Received response:\n" + responseString);
+        } finally {
+            if (newClientConnection != null) newClientConnection.close();
+        }
     }
 
     public static Message createRadiologyOrderMessage() throws HL7Exception {
@@ -126,26 +123,26 @@ public class SendAndReceiveAMessage {
 
         // handle the patient PID component
         PID pid = message.getPATIENT().getPID();
-        pid.getPatientIDInternalID(0).getID().setValue("GAN00001");
-        pid.getPatientName(0).getFamilyName().setValue("Patient");
+        pid.getPatientID().getIDNumber().setValue("GAN00001");
+        pid.getPatientName(0).getFamilyName().getSurname().setValue("Patient");
         pid.getPatientName(0).getGivenName().setValue("Dummy");
-        pid.getDateOfBirth().getTimeOfAnEvent().setValue("20120830");
-        pid.getSex().setValue("M");
+        pid.getDateTimeOfBirth().getTime().setValue("20120830");
+        pid.getAdministrativeSex().setValue("M");
         // TODO: do we need patient admission ID / account number
 
         // handle patient visit component
         PV1 pv1 = message.getPATIENT().getPATIENT_VISIT().getPV1();
         pv1.getAssignedPatientLocation().getPointOfCare().setValue("OPD");
-        pv1.getAssignedPatientLocation().getLocationType().setValue("EMR");
+        pv1.getAssignedPatientLocation().getPersonLocationType().setValue("EMR");
         pv1.getReferringDoctor(0).getIDNumber().setValue("1");
-        pv1.getReferringDoctor(0).getFamilyName().setValue("Dummy");
+        pv1.getReferringDoctor(0).getFamilyName().getSurname().setValue("Dummy");
         pv1.getReferringDoctor(0).getGivenName().setValue("Doctor");
 
         // handle ORC component
         ORC orc = message.getORDER().getORC();
-        orc.getPlacerOrderNumber(0).getEntityIdentifier().setValue("A00");
+        orc.getPlacerOrderNumber().getEntityIdentifier().setValue("A00");
         orc.getFillerOrderNumber().getEntityIdentifier().setValue("B00");
-        orc.getEnteredBy().getGivenName().setValue("Bahmni");
+        orc.getEnteredBy(0).getGivenName().setValue("Bahmni");
         orc.getOrderControl().setValue("NW");
 
         // handle OBR component
@@ -156,8 +153,8 @@ public class SendAndReceiveAMessage {
 
         // note that we are just sending modality here, not the device location
         obr.getPlacerField2().setValue("CR");
-        obr.getQuantityTiming().getPriority().setValue("STAT");
-        obr.getScheduledDateTime().getTimeOfAnEvent().setValue(HL7Utils.getHl7DateFormat().format(new Date()));
+        obr.getQuantityTiming(0).getPriority().setValue("STAT");
+        obr.getScheduledDateTime().getTime().setValue(HL7Utils.getHl7DateFormat().format(new Date()));
 
         // break the reason for study up by lines
         obr.getReasonForStudy(0).getText().setValue("Creating a test order programmatically");

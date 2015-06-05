@@ -16,8 +16,8 @@ package org.bahmni.module.hl7;
 
 import ca.uhn.hl7v2.AcknowledgmentCode;
 import ca.uhn.hl7v2.model.DataTypeException;
-import ca.uhn.hl7v2.model.v23.message.ACK;
-import ca.uhn.hl7v2.model.v23.segment.MSH;
+import ca.uhn.hl7v2.model.v25.message.ACK;
+import ca.uhn.hl7v2.model.v25.segment.MSH;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -35,12 +35,12 @@ public class HL7Utils {
         msh.getSendingFacility().getHd1_NamespaceID().setValue(sendingFacility);
         msh.getSendingFacility().getUniversalID().setValue(sendingFacility);
         msh.getSendingFacility().getNamespaceID().setValue(sendingFacility);
-        msh.getDateTimeOfMessage().getTimeOfAnEvent().setValue(getHl7DateFormat().format(dateTime));
-        msh.getMessageType().getMessageType().setValue(messageType);
+        msh.getDateTimeOfMessage().getTs1_Time().setValue(getHl7DateFormat().format(dateTime));
+        msh.getMessageType().getMessageCode().setValue(messageType);
         msh.getMessageType().getTriggerEvent().setValue(triggerEvent);
         //  TODO: do we need to send Message Control ID?
         msh.getProcessingID().getProcessingID().setValue("P");  // stands for production (?)
-        msh.getVersionID().setValue("2.3");
+        msh.getVersionID().getVersionID().setValue("2.3");
 
         return msh;
     }
@@ -50,7 +50,7 @@ public class HL7Utils {
 
         populateMessageHeader(ack.getMSH(), new Date(), "ACK", null, sendingFacility);
 
-        ack.getMSA().getAcknowledgementCode().setValue(AcknowledgmentCode.AA.getMessage());
+        ack.getMSA().getAcknowledgmentCode().setValue(AcknowledgmentCode.AA.getMessage());
         ack.getMSA().getMessageControlID().setValue(messageControlId);
 
         return ack;
@@ -61,7 +61,7 @@ public class HL7Utils {
 
         populateMessageHeader(ack.getMSH(), new Date(), "ACK", null, sendingFacility);
 
-        ack.getMSA().getAcknowledgementCode().setValue("AR");
+        ack.getMSA().getAcknowledgmentCode().setValue("AR");
         ack.getMSA().getMessageControlID().setValue(messageControlId);
         ack.getMSA().getTextMessage().setValue(errorMessage);
 
