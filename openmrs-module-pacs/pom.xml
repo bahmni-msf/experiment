@@ -106,7 +106,8 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>org.bahmni.module.hl7.SendAndReceiveAMessage</mainClass>
+                            <mainClass>org.bahmni.module.hl7.OrderCreator</mainClass>
+                            <!--<mainClass>org.bahmni.module.hl7.SendAndReceiveAMessage</mainClass>-->
                             <!--<mainClass>org.bahmni.module.dicom.DicomReceiver</mainClass>-->
                         </manifest>
                     </archive>

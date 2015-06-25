@@ -2,7 +2,7 @@ package org.bahmni.module.hl7;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.model.v23.message.ORM_O01;
+import ca.uhn.hl7v2.model.v25.message.ORM_O01;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
 import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
