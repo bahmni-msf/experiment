@@ -6,6 +6,7 @@ import ca.uhn.hl7v2.app.ConnectionHub;
 import ca.uhn.hl7v2.app.Initiator;
 import ca.uhn.hl7v2.llp.LLPException;
 import ca.uhn.hl7v2.llp.MinLowerLayerProtocol;
+import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v25.group.ORM_O01_PATIENT;
 import ca.uhn.hl7v2.model.v25.message.ORM_O01;
@@ -69,7 +70,7 @@ public class OrderCreator {
         }
     }
 
-    public static Message createRadiologyOrderMessage() throws HL7Exception {
+    public static ORM_O01 createRadiologyOrderMessage() throws HL7Exception {
         ORM_O01 message = new ORM_O01();
 
         // handle the MSH component
@@ -83,7 +84,7 @@ public class OrderCreator {
 //        pid.getPatientID().getIDNumber().setValue("GAN00001");
         pid.getPatientIdentifierList(0).getIDNumber().setValue("GAN00001");
         pid.getPatientName(0).getFamilyName().getSurname().setValue("Patient");
-        pid.getPatientName(0).getGivenName().setValue("Dummy");
+        pid.getPatientName(0).getGivenName().setValue("Dummy1");
         pid.getDateTimeOfBirth().getTime().setValue("20120830");
         pid.getAdministrativeSex().setValue("M");
         // TODO: do we need patient admission ID / account number
@@ -107,13 +108,14 @@ public class OrderCreator {
         // handle ORC component
         ORC orc = message.getORDER().getORC();
         orc.getPlacerOrderNumber().getEntityIdentifier().setValue("A00");
-        orc.getFillerOrderNumber().getEntityIdentifier().setValue("B01"); // Accession number in Imagesuite
+        orc.getFillerOrderNumber().getEntityIdentifier().setValue("B00"); // Accession number in Imagesuite
         orc.getEnteredBy(0).getGivenName().setValue("Bahmni");
         orc.getOrderControl().setValue("NW");
+        orc.getOrderingProvider(0).getGivenName().setValue("OrderingProvider");
 
 
         // handle OBR component
-        OBR obr = message.getORDER().getORDER_DETAIL().getOBR();
+        OBR obr = message.getORDER().getORDER_DETAIL().getOBR(); // http://www.mexi.be/documents/hl7/ch400024.htm  http://www.mexi.be/documents/hl7/ch700010.htm
         obr.getUniversalServiceIdentifier().getIdentifier().setValue("1234");
         obr.getUniversalServiceIdentifier().getText().setValue("Abdomen ap");
         //obr.getUniversalServiceIdentifier().getNameOfCodingSystem().setValue("");
@@ -135,4 +137,24 @@ public class OrderCreator {
         return message;
     }
 
+    public static Message editRadiologyOrderMessage(ORM_O01 message) throws DataTypeException {
+        ORC orc = message.getORDER().getORC();
+        orc.getOrderControl().setValue("XO");
+
+
+        return message;
+    }
+
+    public static Message changeStatusRadiologyOrderMessage(ORM_O01 message) throws DataTypeException {
+        ORC orc = message.getORDER().getORC(); //http://www.mexi.be/documents/hl7/ch400009.htm
+        orc.getOrderControl().setValue("SC");
+        orc.getOrderStatus().setValue("CM"); //CM Order is complete
+        return message;
+    }
+
+    public static Message cancelRadiologyOrderMessage(ORM_O01 message) throws DataTypeException {
+        ORC orc = message.getORDER().getORC();
+        orc.getOrderControl().setValue("CA");
+        return message;
+    }
 }
