@@ -10,9 +10,14 @@ import ca.uhn.hl7v2.app.HL7Service;
 import ca.uhn.hl7v2.app.Initiator;
 import ca.uhn.hl7v2.llp.LLPException;
 import ca.uhn.hl7v2.llp.MinLowerLayerProtocol;
+import ca.uhn.hl7v2.model.AbstractMessage;
+import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.model.v231.message.ADT_A08;
 import ca.uhn.hl7v2.model.v25.group.ORM_O01_PATIENT;
+import ca.uhn.hl7v2.model.v25.message.ADT_A01;
 import ca.uhn.hl7v2.model.v25.message.ORM_O01;
+import ca.uhn.hl7v2.model.v25.segment.EVN;
 import ca.uhn.hl7v2.model.v25.segment.MSH;
 import ca.uhn.hl7v2.model.v25.segment.OBR;
 import ca.uhn.hl7v2.model.v25.segment.ORC;
@@ -55,8 +60,8 @@ public class SendAndReceiveAMessage {
         }
 
         SendAndReceiveAMessage sendAndReceiveAMessage = new SendAndReceiveAMessage(host, port, timeout);
-//        sendAndReceiveAMessage.startServer();
-//        sendAndReceiveAMessage.createRemoteOrder(remoteHost, remotePort);
+        sendAndReceiveAMessage.startServer();
+        sendAndReceiveAMessage.createRemoteOrder(remoteHost, remotePort);
 //        sendAndReceiveAMessage.createLocalOrder(host, port);
     }
 
@@ -105,7 +110,11 @@ public class SendAndReceiveAMessage {
             ConnectionHub connectionHub = ConnectionHub.getInstance();
             newClientConnection = connectionHub.attach(remoteHost, remotePort, new PipeParser(), MinLowerLayerProtocol.class);
             Initiator initiator = newClientConnection.getInitiator();
-            Message response = initiator.sendAndReceive(createRadiologyOrderMessage());
+//            Message response = initiator.sendAndReceive(createRadiologyOrderMessage());
+//            Message response = initiator.sendAndReceive(createPatientEditMessage());
+//            Message response = initiator.sendAndReceive(createPatientEditMessageV231());
+            Message response = initiator.sendAndReceive(createGeneric_Message());
+            System.out.print(response);
             String responseString = new PipeParser().encode(response);
 
             log.debug("Received response:\n" + responseString);
@@ -125,8 +134,7 @@ public class SendAndReceiveAMessage {
         // handle the patient PID component
         ORM_O01_PATIENT patient = message.getPATIENT();
         PID pid = patient.getPID();
-        pid.getPatientID().getIDNumber().setValue("GAN00001");
-        pid.getPatientIdentifierList(0).getIDNumber().setValue("GAN00001");
+        pid.getPatientIdentifierList(0).getIDNumber().setValue("GAN111113");
         pid.getPatientName(0).getFamilyName().getSurname().setValue("Patient");
         pid.getPatientName(0).getGivenName().setValue("Dummy");
         pid.getDateTimeOfBirth().getTime().setValue("20120830");
@@ -143,8 +151,8 @@ public class SendAndReceiveAMessage {
 
         // handle ORC component
         ORC orc = message.getORDER().getORC();
-        orc.getPlacerOrderNumber().getEntityIdentifier().setValue("A00");
-        orc.getFillerOrderNumber().getEntityIdentifier().setValue("B00");
+        orc.getPlacerOrderNumber().getEntityIdentifier().setValue("A00111");
+        orc.getFillerOrderNumber().getEntityIdentifier().setValue("B00111");
         orc.getEnteredBy(0).getGivenName().setValue("Bahmni");
         orc.getOrderControl().setValue("NW");
 
@@ -164,6 +172,80 @@ public class SendAndReceiveAMessage {
         obr.getReasonForStudy(1).getText().setValue("This is a test order. Please ignore this order.");
 
         return message;
+    }
+
+    public AbstractMessage createPatientEditMessage() throws DataTypeException {
+        ADT_A01 message = new ADT_A01();
+        // handle the MSH component
+        MSH msh = message.getMSH();
+        msh.getMessageControlID().setValue("MESSAGE_CONTROL_ID_2");
+        HL7Utils.populateMessageHeader(msh, new Date(), "ADT", "A08", "Bahmni EMR");
+
+        EVN evn = message.getEVN();
+        evn.getEventTypeCode().setValue("A08");
+        evn.getRecordedDateTime().getTime().setValue(HL7Utils.getHl7DateFormat().format(new Date()));
+
+        // handle the patient PID component
+        PID pid = message.getPID();
+        pid.getPatientIdentifierList(0).getIDNumber().setValue("BAH228886");
+        pid.getPatientName(0).getFamilyName().getSurname().setValue("Test1");
+        pid.getPatientName(0).getGivenName().setValue("patnovone1");
+        pid.getDateTimeOfBirth().getTime().setValue("20120830");
+        pid.getAdministrativeSex().setValue("M");
+
+        PV1 pv1 = message.getPV1();
+        pv1.getPv12_PatientClass().setValue("O");
+
+        return message;
+    }
+
+    public AbstractMessage createPatientEditMessageV231() throws DataTypeException {
+        ADT_A08 message = new ADT_A08();
+
+        ca.uhn.hl7v2.model.v231.segment.MSH msh = message.getMSH();
+        msh.getMessageControlID().setValue("MESSAGE_CONTROL_ID_2");
+        msh.getFieldSeparator().setValue("|");
+        msh.getEncodingCharacters().setValue("^~\\&");
+        msh.getSendingFacility().getHd1_NamespaceID().setValue("ExperimentEMR");
+        msh.getSendingFacility().getUniversalID().setValue("ExperimentEMR");
+        msh.getSendingFacility().getNamespaceID().setValue("ExperimentEMR");
+        msh.getDateTimeOfMessage().getTimeOfAnEvent().setValue(HL7Utils.getHl7DateFormat().format(new Date()));
+        msh.getMessageType().getMsg1_MessageType().setValue("ADT");
+        msh.getMessageType().getTriggerEvent().setValue("A08");
+        msh.getProcessingID().getProcessingID().setValue("P");
+        msh.getVersionID().getVersionID().setValue("2.5");
+
+        ca.uhn.hl7v2.model.v231.segment.EVN evn = message.getEVN();
+        evn.getRecordedDateTime().getTimeOfAnEvent().setValue(HL7Utils.getHl7DateFormat().format(new Date()));
+        evn.getEventTypeCode().setValue("A08");
+
+        // handle the patient PID component
+        ca.uhn.hl7v2.model.v231.segment.PID pid = message.getPID();
+        pid.getPatientIdentifierList(0).getID().setValue("GAN111111");
+        pid.getPatientName(0).getFamilyLastName().getFamilyName().setValue("Pati");//FamilyName
+        pid.getPatientName(0).getGivenName().setValue("Dum");//GivenName
+        pid.getDateTimeOfBirth().getTimeOfAnEvent().setValue(new Date());
+        pid.getSex().setValue("M");
+
+        ca.uhn.hl7v2.model.v231.segment.PV1 pv1 = message.getPV1();
+        pv1.getPv12_PatientClass().setValue("O");
+
+        return message;
+    }
+
+    public Message createGeneric_Message() throws HL7Exception {
+//        String msg = "MSH|^~\\&||Bahmni EMR^Bahmni EMR|||20151120124227||ADT^A08|MESSAGE_CONTROL_ID_2|T|2.5|\r"
+//            + "EVN|A08|20151120124227|\r"
+//            + "PID|||BAH228886||Test1^patnovone1||20120830|M|\r"
+//            + "PV1||O\r";
+
+        String msg = "MSH|^~\\&||BahmniEMR^BahmniEMR|||2015120210||ORM^O01|144896054989310573|P|2.5\r"
+                + "PID|||BAH227660||^BAH227660||19881029000000+0530|F\r"
+                + "ORC|NW|ORD-106322|ORD-106322|||||||^^BahmniEMR||a0f83ce7-267e-4730-9f78-5d924beee3c1^^Gokul Kafle\r"
+                + "OBR||||KNEE-LT^Knee-LATERAL\r";
+        PipeParser p = new PipeParser();
+        Message adt = p.parse(msg);
+        return adt;
     }
 
 }

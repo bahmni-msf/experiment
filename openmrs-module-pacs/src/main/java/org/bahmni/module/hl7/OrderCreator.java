@@ -37,8 +37,8 @@ public class OrderCreator {
         String host = "localhost";
         int port = 9000;
 
-        String remoteHost = "10.0.0.25";
-        int remotePort = 1235;
+        String remoteHost = "172.18.2.27";//"10.0.0.25";
+        int remotePort = 9000;//1235;
 
         int timeout = 300000;
 
@@ -81,7 +81,7 @@ public class OrderCreator {
         // handle the patient PID component
         ORM_O01_PATIENT patient = message.getPATIENT();
         PID pid = patient.getPID();
-//        pid.getPatientID().getIDNumber().setValue("GAN00001");
+        //pid.getPatientID().getIDNumber().setValue("GAN00001");
         pid.getPatientIdentifierList(0).getIDNumber().setValue("GAN00001");
         pid.getPatientName(0).getFamilyName().getSurname().setValue("Patient");
         pid.getPatientName(0).getGivenName().setValue("Dummy1");
@@ -108,10 +108,15 @@ public class OrderCreator {
         // handle ORC component
         ORC orc = message.getORDER().getORC();
         orc.getPlacerOrderNumber().getEntityIdentifier().setValue("A00");
-        orc.getFillerOrderNumber().getEntityIdentifier().setValue("B00"); // Accession number in Imagesuite
+        orc.getFillerOrderNumber().getEntityIdentifier().setValue("B01-10/123456789"); // Accession number in Imagesuite
         orc.getEnteredBy(0).getGivenName().setValue("Bahmni");
         orc.getOrderControl().setValue("NW");
-        orc.getOrderingProvider(0).getGivenName().setValue("OrderingProvider");
+
+//        orc.getOrderControl().setValue("CA");
+//        orc.getOrderStatus().setValue("DC");
+        orc.getOrderingProvider(0).getGivenName().setValue("Ordering");
+        orc.getOrderingProvider(0).getIDNumber().setValue("1");
+        orc.getOrderingProvider(0).getFamilyName().getSurname().setValue("Provider");
 
 
         // handle OBR component
@@ -129,10 +134,10 @@ public class OrderCreator {
         obr.getScheduledDateTime().getTime().setValue(HL7Utils.getHl7DateFormat().format(new Date()));
 
         // break the reason for study up by lines
-        obr.getReasonForStudy(0).getText().setValue("Creating a test order programmatically");
+        obr.getReasonForStudy(0).getText().setValue("Creating a test order programmaticallyCreating a test order programmaticallyCreating a test order programmatically");
         obr.getReasonForStudy(1).getText().setValue("This is a test order. Please ignore this order.");
 
-        obr.getCollectorSComment(0).getText().setValue("This is Collector's Notes : Please ignore this Order as its a test that we doing for Order creation");
+        obr.getCollectorSComment(0).getText().setValue("This is Collector's Notes : Study Description");
 
         return message;
     }
