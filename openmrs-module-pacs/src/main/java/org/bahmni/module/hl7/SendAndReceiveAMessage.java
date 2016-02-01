@@ -24,6 +24,7 @@ import ca.uhn.hl7v2.model.v25.segment.ORC;
 import ca.uhn.hl7v2.model.v25.segment.PID;
 import ca.uhn.hl7v2.model.v25.segment.PV1;
 import ca.uhn.hl7v2.parser.PipeParser;
+import ca.uhn.hl7v2.util.idgenerator.UUIDGenerator;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -46,8 +47,8 @@ public class SendAndReceiveAMessage {
         String host = "localhost";
         int port = 9000;
 
-        String remoteHost = "10.0.0.25";
-        int remotePort = 1235;
+        String remoteHost = "192.168.33.10";//"192.168.0.75";
+        int remotePort = 2575;
 
         int timeout = 300000;
 
@@ -158,7 +159,7 @@ public class SendAndReceiveAMessage {
 
         // handle OBR component
         OBR obr = message.getORDER().getORDER_DETAIL().getOBR();
-        obr.getUniversalServiceIdentifier().getIdentifier().setValue("Chest lordotic xray");
+        obr.getUniversalServiceIdentifier().getIdentifier().setValue("CHESTLORDOTICXRAY");
         obr.getUniversalServiceIdentifier().getText().setValue("Chest lordotic xray");
 //        obr.getFillerOrderNumber().getEntityIdentifier().setValue("ORNO1");
 
@@ -240,11 +241,20 @@ public class SendAndReceiveAMessage {
 //            + "PV1||O\r";
 
         String msg = "MSH|^~\\&||BahmniEMR^BahmniEMR|||2015120210||ORM^O01|144896054989310573|P|2.5\r"
-                + "PID|||BAH227660||^BAH227660||19881029000000+0530|F\r"
-                + "ORC|NW|ORD-106322|ORD-106322|||||||^^BahmniEMR||a0f83ce7-267e-4730-9f78-5d924beee3c1^^Gokul Kafle\r"
-                + "OBR||||KNEE-LT^Knee-LATERAL\r";
+                + "PID|||BAH227661||Anita^BAH227661||19881029000000+0530|F\r"
+                + "ORC|NW|ORD-106327|ORD-106327|||||||^^BahmniEMR||a0f83ce7-267e-4730-9f78-5d924beee3c1^^Gokul Kafle\r"
+                + "OBR|5|5|5|KNEE-LT^Knee-LATERAL||||||||||||||AccNo7|ProcId7|SPStepId7|\r"
+                + "ZDS|1.2.4.0.13.1.4.2252867.1.ORD-106326";
+
+        String msg1 = "MSH|^~\\&||BahmniEMR^BahmniEMR|||2015120410||ORM^O01|144920444787410820|P|2.5\r"
+                + "PID|||BAH149551||^BAH149551||20090101000000+0545|M\r"
+                + "ORC|NW|ORD-108207|ORD-108207|||||||^^BahmniEMR||4734a18a-3175-4ba5-8859-54650f924d66^^Sameer Raj Joshi\r"
+                + "OBR||||4ARM-LT^ForeARM-LATERAL|||||||||||||||||||||||||||||||||||^ForeARM-LATERAL||||^Mahendra,saud\r";
+
         PipeParser p = new PipeParser();
-        Message adt = p.parse(msg);
+        Message adt = p.parse(msg1);
+        UUIDGenerator generator = new UUIDGenerator();
+//        generator.getID();
         return adt;
     }
 
