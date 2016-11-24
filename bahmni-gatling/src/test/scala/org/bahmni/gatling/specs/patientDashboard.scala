@@ -28,7 +28,7 @@ class patientDashboard extends Simulation {
               .get("/openmrs/ws/rest/v1/bahmnicore/observations?concept=Vitals&numberOfVisits=2&patientUuid=abe60b9e-3792-11e6-b60d-d4ae52d4c47d")
               .headers(header),
             http("request_5")
-              .get("/openmrs/ws/rest/v1/bahmnicore/orders?concept=Chest&concept=Neck&includeObs=true&numberOfVisits=1&orderTypeUuid=244b43be-28f1-11e4-86a0-005056822b0b&patientUuid=abe60b9e-3792-11e6-b60d-d4ae52d4c47d")
+              .get("/openmrs/ws/rest/v1/bahmnicore/orders?concept=Chest-AP&concept=Chest-PA&includeObs=true&numberOfVisits=1&orderTypeUuid=244b43be-28f1-11e4-86a0-005056822b0b&patientUuid=abe60b9e-3792-11e6-b60d-d4ae52d4c47d")
               .headers(header),
             http("request_6")
               .get("/openmrs/ws/rest/v1/visit?includeInactive=true&patient=abe60b9e-3792-11e6-b60d-d4ae52d4c47d&v=custom:(uuid,visitType,startDatetime,stopDatetime,location,encounters:(uuid))")

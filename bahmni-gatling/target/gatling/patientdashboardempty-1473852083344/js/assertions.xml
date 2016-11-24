@@ -1,5 +1,0 @@
-<testsuite name="org.bahmni.gatling.spec.patientDashboardEmpty" tests="1" errors="0" failures="0" time="0">
-<testcase name="Global: percentage of successful requests is 100" status="true" time="0">
-  <system-out>Global: percentage of successful requests is 100</system-out>
-</testcase>
-</testsuite>

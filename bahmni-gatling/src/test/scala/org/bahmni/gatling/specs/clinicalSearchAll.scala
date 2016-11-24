@@ -12,7 +12,7 @@ class clinicalSearchAll extends Simulation {
 
     val scn = scenario("clinicalSearchAll")
       .exec(http("request_0")
-        .get("https://benchmark.mybahmni.org/openmrs/ws/rest/v1/bahmnicore/search/patient?loginLocationUuid=8d6c993e-c2cc-11de-8d13-0010c6dffd0f&q=performance&startIndex=0")
+        .get("/openmrs/ws/rest/v1/bahmnicore/search/patient?loginLocationUuid=8d6c993e-c2cc-11de-8d13-0010c6dffd0f&q=performance&startIndex=0")
         .headers(header))
 
     setUp(scn.inject(Configuration.Load.USER_PROFILE)).protocols(Configuration.HttpConf.HTTP_PROTOCOL)
