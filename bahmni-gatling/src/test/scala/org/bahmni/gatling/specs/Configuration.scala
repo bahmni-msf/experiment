@@ -7,6 +7,10 @@ import scala.concurrent.duration._
 object Configuration {
     object Constants {
         val BASE_URL = "https://172.18.2.46"
+        val LOGIN_USER = "superman"
+        val LOGIN_USER_UUID = "12a02226-5bb1-4ad0-bcca-14e74e1f755b"
+        val LOGIN_LOCATION_UUID = "8d6c993e-c2cc-11de-8d13-0010c6dffd0f"
+        val PATIENT_IDENTIFIER = "BAH2530"
     }
 
     object HttpConf {
@@ -21,6 +25,6 @@ object Configuration {
     }
 
     object Load {
-        var USER_PROFILE = Iterable(constantUsersPerSec(1) during 10)
+        var USER_PROFILE = Iterable(constantUsersPerSec(1 ) during 1)
     }
 }

@@ -1,25 +1,56 @@
-package org.bahmni.gatling.spec
+package org.bahmni.gatling.specs
 
 import io.gatling.core.Predef._
-import io.gatling.http.Predef._
+import io.gatling.core.structure.{ChainBuilder, ScenarioBuilder}
+import org.bahmni.gatling.HttpRequests._
+import org.bahmni.gatling.spec.Configuration
+import org.bahmni.gatling.spec.Configuration.Constants._
 
-class registrationSearch extends Simulation {
+class RegistrationSearch extends Simulation {
 
-  val headers_0 = Map(
-    "Cache-Control" -> "no-cache",
-    "Disable-WWW-Authenticate" -> "true",
-    "Pragma" -> "no-cache",
-    "Accept" -> "application/json, text/plain, */*"
-)
+  val login: ChainBuilder = exec(
+    getLoginLocations
+      .resources(
+        getGlobalProperty("locale.allowed.list")
+      )
+  )
 
-  val scn = scenario("registrationSearch")
-    .exec(http("regular_search")
-      .get("/openmrs/ws/rest/v1/bahmnicore/search/patient?addressSearchResultsConfig=%7B%7D&filterOnAllIdentifiers=true&identifier=%25&loginLocationUuid=8d6c993e-c2cc-11de-8d13-0010c6dffd0f&patientSearchResultsConfig=%7B%7D&programAttributeFieldValue=&s=byIdOrNameOrVillage&startIndex=0")
-                 .headers(headers_0)
-      .resources(http("exact_search")
-        .get("/openmrs/ws/rest/v1/bahmnicore/search/patient?addressSearchResultsConfig=%7B%7D&filterOnAllIdentifiers=true&identifier=BAH2530&loginLocationUuid=8d6c993e-c2cc-11de-8d13-0010c6dffd0f&patientSearchResultsConfig=%7B%7D&programAttributeFieldValue=&s=byIdOrNameOrVillage&startIndex=0")
-        .headers(headers_0)))
+  var goToHomePage: ChainBuilder = exec(
+    getUser(LOGIN_USER)
+      .resources(
+        getProviderForUser(LOGIN_USER_UUID),
+        getLoginLocations
+      )
+  )
 
-  setUp(scn.inject(Configuration.Load.USER_PROFILE)).protocols(Configuration.HttpConf.HTTP_PROTOCOL)
+  val goToRegistrationSearchPage: ChainBuilder = exec(
+    getVisitLocation(LOGIN_LOCATION_UUID)
+      .resources(
+        getProviderForUser(LOGIN_USER_UUID),
+        getGlobalProperty("mrs.genders"),
+        getGlobalProperty("bahmni.relationshipTypeMap"),
+        getAddressHierarchyLevel,
+        getIdentifierTypes,
+        getRelationshipTypes,
+        getEntityMapping,
+        getPersonAttributeTypes,
+        getRegistrationConcepts
+      )
+
+  )
+
+  val performSearch: ChainBuilder = exec(
+    searchPatientUsingIdentifier(LOGIN_LOCATION_UUID, PATIENT_IDENTIFIER)
+  )
+
+  val scn: ScenarioBuilder = scenario("registerPatient")
+    .exec(login)
+    .exec(goToHomePage)
+    .exec(goToRegistrationSearchPage)
+    .exec(performSearch)
+
+  setUp(scn.inject(Configuration.Load.USER_PROFILE))
+    .protocols(Configuration.HttpConf.HTTP_PROTOCOL)
     .assertions(global.successfulRequests.percent.is(100))
+
 }

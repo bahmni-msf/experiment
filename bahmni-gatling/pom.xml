@@ -39,7 +39,7 @@
                 <configuration>
                     <simulationsFolder>src/test/scala</simulationsFolder>
                     <runMultipleSimulations>true</runMultipleSimulations>
-                    <simulationClass>org.bahmni.gatling.spec.registrationSearch</simulationClass>
+                    <simulationClass>org.bahmni.gatling.specs.RegisterUser</simulationClass>
                 </configuration>
                 <executions>
                     <execution>
