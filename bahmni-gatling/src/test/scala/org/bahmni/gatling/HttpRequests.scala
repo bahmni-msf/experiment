@@ -103,6 +103,12 @@ object HttpRequests {
       .queryParam("v", "full")
   }
 
+  def getWardListDetails(locationName: String): HttpRequestBuilder = {
+    http("request_14")
+      .get("/openmrs/ws/rest/v1/bahmnicore/sql?q=emrapi.sqlGet.wardsListDetails&v=full")
+      .queryParam("location_name", locationName)
+  }
+
   def getRelationship(personUuid: String): HttpRequestBuilder = {
     http("get relationship")
       .get("/openmrs/ws/rest/v1/relationship")
@@ -237,4 +243,8 @@ object HttpRequests {
       .asJSON
   }
 
+  def getAdmissionLocations: HttpRequestBuilder = {
+    http("get admission locations")
+      .get("/openmrs/ws/rest/v1/admissionLocation/")
+  }
 }

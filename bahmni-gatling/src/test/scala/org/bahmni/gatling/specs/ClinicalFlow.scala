@@ -71,7 +71,9 @@ class ClinicalFlow extends Simulation {
     .exec(goToClinicalApp)
     .exec(goToClinicalSearch)
     .exec(gotToDashboard(PATIENT_UUID, VISIT_UUID))
-    .exec()
+    .pause(30)
+    .exec(goToClinicalSearch)
+    .exec(gotToDashboard(PATIENT_UUID, VISIT_UUID))
 
 
   setUp(scn.inject(Configuration.Load.USER_PROFILE))
