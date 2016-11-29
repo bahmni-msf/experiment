@@ -1,12 +1,12 @@
-package org.bahmni.gatling.specs
+package org.bahmni.gatling.scenarios
 
 import io.gatling.core.Predef._
 import io.gatling.core.structure.{ChainBuilder, ScenarioBuilder}
+import org.bahmni.gatling.Configuration
 import org.bahmni.gatling.HttpRequests._
-import org.bahmni.gatling.spec.Configuration
-import org.bahmni.gatling.spec.Configuration.Constants._
+import org.bahmni.gatling.Configuration.Constants._
 
-class RegistrationSearch extends Simulation {
+object RegistrationSearch {
 
   val login: ChainBuilder = exec(
     getLoginLocations
@@ -39,18 +39,24 @@ class RegistrationSearch extends Simulation {
 
   )
 
-  val performSearch: ChainBuilder = exec(
-    searchPatientUsingIdentifier(LOGIN_LOCATION_UUID, PATIENT_IDENTIFIER)
-  )
+  def performSearch(patientIdentifier: String): ChainBuilder = {
+    exec(
+      searchPatientUsingIdentifier(LOGIN_LOCATION_UUID, patientIdentifier)
+    )
+  }
 
   val scn: ScenarioBuilder = scenario("registerPatient")
-    .exec(login)
-    .exec(goToHomePage)
-    .exec(goToRegistrationSearchPage)
-    .exec(performSearch)
+    .repeat(Configuration.Load.REPEAT_TIMES) {
+      exec(login)
+        .exec(goToHomePage)
+        .exec(goToRegistrationSearchPage)
+        .exec(performSearch(PATIENT_IDENTIFIER))
+        .pause(10)
+        .exec(goToRegistrationSearchPage)
+        .exec(performSearch(PATIENT_IDENTIFIER1))
+        .pause(10)
+        .exec(goToRegistrationSearchPage)
+        .exec(performSearch(PATIENT_IDENTIFIER2))
 
-  setUp(scn.inject(Configuration.Load.USER_PROFILE))
-    .protocols(Configuration.HttpConf.HTTP_PROTOCOL)
-    .assertions(global.successfulRequests.percent.is(100))
-
+    }
 }

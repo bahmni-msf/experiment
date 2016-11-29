@@ -1,12 +1,15 @@
-package org.bahmni.gatling.spec
+package org.bahmni.gatling.scenarios
 
 import io.gatling.core.Predef._
-import org.bahmni.gatling.HttpRequests._
-import org.bahmni.gatling.spec.Configuration.Constants._
+import io.gatling.core.structure.ScenarioBuilder
+import io.gatling.http.request.builder.HttpRequestBuilder
+import org.bahmni.gatling.Configuration
+import org.bahmni.gatling.Configuration.Constants._
+import org.bahmni.gatling.HttpRequests.{getProviderForUser, _}
 
-class inPatientListing extends Simulation {
+object AdtFlow {
 
-  val goToADTApp = {
+  val goToADTApp: HttpRequestBuilder = {
     getUser(LOGIN_USER)
       .resources(
         getProviderForUser(LOGIN_USER_UUID),
@@ -26,10 +29,8 @@ class inPatientListing extends Simulation {
       )
   }
 
-  val scn = scenario("inPatientListing")
-    .exec(goToADTApp)
-
-  setUp(scn.inject(Configuration.Load.USER_PROFILE)).protocols(Configuration.HttpConf.HTTP_PROTOCOL)
-    .assertions(global.successfulRequests.percent.is(100))
-
+  val scn: ScenarioBuilder = scenario("inPatientListing")
+    .repeat(Configuration.Load.REPEAT_TIMES) {
+      exec(goToADTApp)
+    }
 }

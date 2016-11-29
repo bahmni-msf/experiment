@@ -1,12 +1,12 @@
-package org.bahmni.gatling.specs
+package org.bahmni.gatling.scenarios
 
 import io.gatling.core.Predef._
 import io.gatling.core.structure.{ChainBuilder, ScenarioBuilder}
+import org.bahmni.gatling.Configuration
+import org.bahmni.gatling.Configuration.Constants._
 import org.bahmni.gatling.HttpRequests._
-import org.bahmni.gatling.spec.Configuration
-import org.bahmni.gatling.spec.Configuration.Constants._
 
-class ClinicalFlow extends Simulation {
+object ClinicalFlow {
 
   val goToClinicalApp: ChainBuilder = exec(
     getPatientConfigFromServer
@@ -68,16 +68,13 @@ class ClinicalFlow extends Simulation {
   }
 
   val scn: ScenarioBuilder = scenario("clinical search")
-    .exec(goToClinicalApp)
-    .exec(goToClinicalSearch)
-    .exec(gotToDashboard(PATIENT_UUID, VISIT_UUID))
-    .pause(30)
-    .exec(goToClinicalSearch)
-    .exec(gotToDashboard(PATIENT_UUID, VISIT_UUID))
-
-
-  setUp(scn.inject(Configuration.Load.USER_PROFILE))
-    .protocols(Configuration.HttpConf.HTTP_PROTOCOL)
-    .assertions(global.successfulRequests.percent.is(100))
+    .repeat(Configuration.Load.REPEAT_TIMES) {
+      exec(goToClinicalApp)
+        .exec(goToClinicalSearch)
+        .exec(gotToDashboard(PATIENT_UUID, VISIT_UUID))
+        .pause(10)
+        .exec(goToClinicalSearch)
+        .exec(gotToDashboard(PATIENT_UUID, VISIT_UUID))
+    }
 
 }

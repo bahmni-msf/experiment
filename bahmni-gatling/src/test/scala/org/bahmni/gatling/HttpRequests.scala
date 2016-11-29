@@ -3,7 +3,7 @@ package org.bahmni.gatling
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
 import io.gatling.http.request.builder.HttpRequestBuilder
-import org.bahmni.gatling.spec.Configuration.Constants._
+import org.bahmni.gatling.Configuration.Constants._
 
 object HttpRequests {
 
@@ -246,5 +246,20 @@ object HttpRequests {
   def getAdmissionLocations: HttpRequestBuilder = {
     http("get admission locations")
       .get("/openmrs/ws/rest/v1/admissionLocation/")
+  }
+
+  def getPatienFeedRecentPage: HttpRequestBuilder = {
+    http("patient recent")
+      .get("/openmrs/ws/atomfeed/patient/recent")
+  }
+
+  def getEncounterFeedRecentPage: HttpRequestBuilder = {
+    http("encounter recent")
+      .get("/openmrs/ws/atomfeed/encounter/recent")
+  }
+
+  def getLabFeedRecentPage: HttpRequestBuilder = {
+    http("lab recent")
+      .get("/openmrs/ws/atomfeed/lab/recent")
   }
 }

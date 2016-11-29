@@ -1,4 +1,4 @@
-package org.bahmni.gatling.spec
+package org.bahmni.gatling
 
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
@@ -12,6 +12,8 @@ object Configuration {
     val PROVIDER_UUID = "cfdc8af5-5847-4ec4-ae85-6c81ed6d814a"
     val LOGIN_LOCATION_UUID = "8d6c993e-c2cc-11de-8d13-0010c6dffd0f"
     val PATIENT_IDENTIFIER = "BAH2530"
+    val PATIENT_IDENTIFIER1 = "BAH195629"
+    val PATIENT_IDENTIFIER2 = "BAH196772"
     val PATIENT_UUID = "54c01cae-78c6-11e6-917f-0ac3d00284a3"
     val VISIT_UUID = "473afb1d-5042-483c-a634-2da3023e2c04"
     val RADIOLOGY_ORDER_TYPE_UUID = "244b43be-28f1-11e4-86a0-005056822b0b"
@@ -25,15 +27,14 @@ object Configuration {
       .inferHtmlResources()
       .basicAuth("superman", "Admin123")
       .acceptHeader("application/json, text/plain, */*")
-      .acceptHeader("Cache-Control, no-cache")
-      .acceptHeader("Pragma, no-cache")
       .acceptEncodingHeader("gzip, deflate, sdch, br")
       .acceptLanguageHeader("en-US,en;q=0.8")
       .userAgentHeader("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36");
   }
 
   object Load {
-    var USER_PROFILE = Iterable(constantUsersPerSec(1) during 1)
+    var USER_PROFILE = Iterable(rampUsers(5) over 10)
+    var REPEAT_TIMES = 3
   }
 
 }
