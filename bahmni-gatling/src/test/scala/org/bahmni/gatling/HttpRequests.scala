@@ -104,7 +104,7 @@ object HttpRequests {
   }
 
   def getWardListDetails(locationName: String): HttpRequestBuilder = {
-    http("request_14")
+    http("get ward list " + locationName)
       .get("/openmrs/ws/rest/v1/bahmnicore/sql?q=emrapi.sqlGet.wardsListDetails&v=full")
       .queryParam("location_name", locationName)
   }
@@ -256,6 +256,21 @@ object HttpRequests {
   def getEncounterFeedRecentPage: HttpRequestBuilder = {
     http("encounter recent")
       .get("/openmrs/ws/atomfeed/encounter/recent")
+  }
+
+  def getEncounterFeedcontent(encounterUuid: String): HttpRequestBuilder = {
+    http("encounter feed content")
+      .get("/openmrs/ws/rest/v1/bahmnicore/bahmniencounter/" + encounterUuid + "?includeAll=true")
+  }
+
+  def getPatientFeedcontent(patientUuid: String): HttpRequestBuilder = {
+    http("patient feed content")
+      .get("/openmrs/ws/rest/v1/patient/" + patientUuid )
+  }
+
+  def getLabFeedcontent(referenceDataUuid: String): HttpRequestBuilder = {
+    http("lab feed content")
+      .get("/openmrs/ws/rest/v1/reference-data/all-tests-and-panels/"+referenceDataUuid )
   }
 
   def getLabFeedRecentPage: HttpRequestBuilder = {

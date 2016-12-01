@@ -11,5 +11,5 @@ class UserSimulation extends Simulation {
     ClinicalFlow.scn.inject(Load.USER_PROFILE),
     AdtFlow.scn.inject(Load.USER_PROFILE))
     .protocols(Configuration.HttpConf.HTTP_PROTOCOL)
-    .assertions(global.successfulRequests.percent.is(100))
+    .assertions(global.successfulRequests.percent.gte(90))
 }

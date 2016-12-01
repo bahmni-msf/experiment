@@ -74,7 +74,7 @@ object ClinicalFlow {
         .exec(gotToDashboard(PATIENT_UUID, VISIT_UUID))
         .pause(10)
         .exec(goToClinicalSearch)
-        .exec(gotToDashboard(PATIENT_UUID, VISIT_UUID))
+        .exec(gotToDashboard(ANOTHER_PATIENT_UUID, ANOTHER_VISIT_UUID))
     }
 
 }
