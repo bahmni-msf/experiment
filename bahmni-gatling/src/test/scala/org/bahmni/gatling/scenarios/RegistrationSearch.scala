@@ -46,15 +46,15 @@ object RegistrationSearch {
   }
 
   val scn: ScenarioBuilder = scenario("registerPatient")
-    .repeat(Configuration.Load.REPEAT_TIMES) {
+    .during(Configuration.Load.DURATION) {
       exec(login)
         .exec(goToHomePage)
         .exec(goToRegistrationSearchPage)
         .exec(performSearch(PATIENT_IDENTIFIER))
-        .pause(10)
+        .pause(20)
         .exec(goToRegistrationSearchPage)
         .exec(performSearch(PATIENT_IDENTIFIER1))
-        .pause(10)
+        .pause(20)
         .exec(goToRegistrationSearchPage)
         .exec(performSearch(PATIENT_IDENTIFIER2))
 

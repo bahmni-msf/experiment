@@ -30,7 +30,7 @@ object AdtFlow {
   }
 
   val scn: ScenarioBuilder = scenario("inPatientListing")
-    .repeat(Configuration.Load.REPEAT_TIMES) {
+    .during(Configuration.Load.DURATION) {
       exec(goToADTApp)
     }
 }

@@ -68,11 +68,11 @@ object ClinicalFlow {
   }
 
   val scn: ScenarioBuilder = scenario("clinical search")
-    .repeat(Configuration.Load.REPEAT_TIMES) {
+    .during(Configuration.Load.DURATION) {
       exec(goToClinicalApp)
         .exec(goToClinicalSearch)
         .exec(gotToDashboard(PATIENT_UUID, VISIT_UUID))
-        .pause(10)
+        .pause(100)
         .exec(goToClinicalSearch)
         .exec(gotToDashboard(ANOTHER_PATIENT_UUID, ANOTHER_VISIT_UUID))
     }
