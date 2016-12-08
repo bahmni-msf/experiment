@@ -76,5 +76,4 @@ object ClinicalFlow {
         .exec(goToClinicalSearch)
         .exec(gotToDashboard(ANOTHER_PATIENT_UUID, ANOTHER_VISIT_UUID))
     }
-
 }

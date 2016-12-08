@@ -277,4 +277,9 @@ object HttpRequests {
     http("lab recent")
       .get("/openmrs/ws/atomfeed/lab/recent")
   }
+
+  def getPatientImage: HttpRequestBuilder = {
+    http("get patient image")
+      .get("/openmrs/ws/rest/v1/patientImage?patientUuid=2e1a2899-409c-40c4-b8fd-3476bb11dce3&q=2016-12-06T12:19:15.166Z")
+  }
 }
