@@ -17,7 +17,8 @@ class UserSimulation extends Simulation {
     AtomfeedScenarios.encounterFeed.inject(Load.ATOMFEED_USER_PROFILE).protocols(HTTP_PROTOCOL),
     AtomfeedScenarios.encounterFeedContent.inject(Load.ATOMFEED_USER_PROFILE).protocols(HTTP_PROTOCOL),
     AtomfeedScenarios.labFeed.inject(Load.ATOMFEED_USER_PROFILE).protocols(HTTP_PROTOCOL),
-    AtomfeedScenarios.labFeedContent.inject(Load.ATOMFEED_USER_PROFILE).protocols(HTTP_PROTOCOL)
+    AtomfeedScenarios.labFeedContent.inject(Load.ATOMFEED_USER_PROFILE).protocols(HTTP_PROTOCOL),
+    BedManagementFlow.scn.inject(rampUsers(1) over 20).protocols(HTTPS_PROTOCOL)
   )
     .assertions(global.successfulRequests.percent.gte(90))
 }

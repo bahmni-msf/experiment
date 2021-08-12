@@ -282,4 +282,43 @@ object HttpRequests {
     http("get patient image")
       .get("/openmrs/ws/rest/v1/patientImage?patientUuid=2e1a2899-409c-40c4-b8fd-3476bb11dce3&q=2016-12-06T12:19:15.166Z")
   }
+
+  def getBeds(patientUuid: String): HttpRequestBuilder = {
+    http("get beds for patient")
+      .get("/openmrs/ws/rest/v1/beds")
+      .queryParam("patientUuid", patientUuid)
+  }
+
+  def getAdmissionLocationDetails(wardUuid: String): HttpRequestBuilder = {
+    http("get Admission Location")
+      .get("/openmrs/ws/rest/v1/admissionLocation/"+wardUuid)
+  }
+
+  def getBedDetails(bedID: String): HttpRequestBuilder = {
+    http("getBedDetails")
+      .get("/openmrs/ws/rest/v1/beds/"+bedID)
+  }
+
+  def updateEncounter(patientUuid: String,providerUuid: String, locationUuid: String) : HttpRequestBuilder = {
+    http("Update Encounter")
+      .post("/openmrs/ws/rest/v1/bahmnicore/bahmniencounter")
+      .body(StringBody(s"""{"patientUuid":"$patientUuid","providerUuids":["$providerUuid"],"includeAll":false,"encounterDateTimeFrom":null,"encounterDateTimeTo":null,"encounterTypeUuids":["$ADMISSION_ENCOUNTER_TYPE_UUID"],"locationUuid":"$locationUuid", "observations":[],"visitTypeUuid":"$VISIT_TYPE_UUID"}"""))
+      .asJSON
+  }
+
+  def assignBedToPatient(bedID: String) : HttpRequestBuilder = {
+    http("Assign Bed")
+      .post("/openmrs/ws/rest/v1/beds/"+bedID)
+      .body(StringBody(s"""{"encounterUuid":"f035148e-559f-4c9d-8626-7d8c177855dd","patientUuid":"$BED_MANAGEMENT_PATIENT_UUID"}"""))
+      .asJSON
+  }
+
+  def getVisitObservations(patientUuid: String,conceptName: String) : HttpRequestBuilder = {
+    http("visit observations")
+      .get("/openmrs/ws/rest/v1/bahmnicore/observations")
+      .queryParam("concept", conceptName)
+      .queryParam("patientUuid", patientUuid)
+      .queryParam("numberOfVisits", 1)
+  }
+
 }

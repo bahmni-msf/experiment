@@ -24,6 +24,10 @@ object Configuration {
     var ENCOUNTER_TYPE_UUID = "24482b92-28f1-11e4-86a0-005056822b0b"
     var ATOMFEED_ENCOUNTER_UUID = "1b5e768d-3c07-4bfb-8195-cc1f768d29d6"
     val ALL_TESTS_AND_PANELS ="24d98284-28f1-11e4-86a0-005056822b0b"
+    val BED_MANAGEMENT_PATIENT_UUID = ""
+    val ADMISSION_LOCATION_WARD_UUID = ""
+    val BED_ID = ""
+    val VISIT_TYPE_UUID = ""
   }
 
   object HttpConf {
