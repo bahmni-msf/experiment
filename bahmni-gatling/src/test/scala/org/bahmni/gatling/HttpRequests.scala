@@ -321,4 +321,37 @@ object HttpRequests {
       .queryParam("numberOfVisits", 1)
   }
 
+
+  def addNewProgram(patientUuid: String): HttpRequestBuilder = {
+    http("enroll to new program")
+      .post("/openmrs/ws/rest/v1/bahmniprogramenrollment")
+      .body(StringBody(s"""{"patientUuid":"$patientUuid","program":"00b914c7-227c-11eb-b77d-000c29554d70","dateEnrolled":"2021-08-09T00:00:00+0530","attributes":[],"states":[{"state":"00bc949a-227c-11eb-b77d-000c29554d70","startDate":"2021-08-09T00:00:00+0530"}]}"""))
+      .asJSON
+  }
+
+  def goToConsultation: HttpRequestBuilder = {
+    http("open Consultation")
+      .get("/openmrs/ws/rest/v1/encountertype/Consultation")
+
+  }
+
+  def fillMedications(patientUuid: String): HttpRequestBuilder = {
+    http("fill medicines")
+      .post("/openmrs/ws/rest/v1/bahmnicore/bahmniencounter")
+      .body(StringBody(s"""{"locationUuid":"84d9c8e9-bdf0-4f8e-a338-f050eecc8ea1","patientUuid":"+$patientUuid+","encounterUuid":null,"visitUuid":null,"providers":[{"uuid":"ec68403e-ff73-48c4-ac7e-78791bcd8e8b"}],"encounterDateTime":null,"extensions":{"mdrtbSpecimen":[]},"context":{"patientProgramUuid":"f358af7e-f5b0-44e9-a640-48a5719d5770"},"visitType":"Hospital","bahmniDiagnoses":[],"orders":[],"drugOrders":[{"careSetting":"OUTPATIENT","drug":{"name":"PARACETAMOL 240 mg Suppository","form":"Suppository","uuid":"3ffde51f-ff12-4b70-9400-4efd49aa840a"},"orderType":"Drug Order","dosingInstructionType":"org.openmrs.module.bahmniemrapi.drugorder.dosinginstructions.FlexibleDosingInstructions","dosingInstructions":{"dose":3,"doseUnits":"µg","route":"Oral","frequency":"Thrice a day","asNeeded":false,"administrationInstructions":"{\"instructions\":\"As directed\",\"additionalInstructions\":\"Testing\"}","quantity":36,"quantityUnits":"µg","numberOfRefills":0},"duration":4,"durationUnits":"Day(s)","scheduledDate":null,"autoExpireDate":null,"dateStopped":null,"orderGroup":{"orderSet":{}}}],"disposition":null,"observations":[],"encounterTypeUuid":"7e10b3cb-e42f-11e5-8c3e-08002715d519"}"""))
+      .asJSON
+  }
+
+  def launchTreatmentEnrolled : HttpRequestBuilder ={
+    http("open Programs")
+      .get("/openmrs/ws/rest/v1/entitymapping?entityUuid=029262f3-b618-4c1e-80c2-d4ecadd38fb2&mappingType=program_encountertype&s=byEntityAndMappingType")
+  }
+
+  def logout: HttpRequestBuilder = {
+    http("logout")
+      .post("/openmrs/ws/rest/v1/auditlog")
+      .body(StringBody(s"""{"eventType":"USER_LOGOUT_SUCCESS","message":"USER_LOGOUT_SUCCESS_MESSAGE","module":"MODULE_LABEL_LOGOUT_KEY"}"""))
+      .asJSON
+  }
+
 }
