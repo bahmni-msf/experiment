@@ -6,7 +6,7 @@ import org.bahmni.gatling.Configuration
 import org.bahmni.gatling.Configuration.Constants._
 import org.bahmni.gatling.HttpRequests._
 
-object BedManagementQueue {
+object BedManagementFlow {
 
   private def goToBedManagementQueueSearch: ChainBuilder = exec(
     getUser(LOGIN_USER)

@@ -92,7 +92,7 @@ object MedicationsFiller {
 
 
 
-  val scn: ScenarioBuilder = scenario("clinical search")
+  val scn: ScenarioBuilder = scenario("Add medications")
     .during(Configuration.Load.DURATION) {
       exec(goToClinicalApp)
         .exec(goToClinicalSearch)
