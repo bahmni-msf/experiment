@@ -1,4 +1,4 @@
-package org.bahmni.gatling.scenarios
+package org.bahmni.gatling.scenarios.GetCallScenarios
 
 import io.gatling.core.Predef._
 import io.gatling.core.structure.{ChainBuilder, ScenarioBuilder}

@@ -302,7 +302,8 @@ object HttpRequests {
   def updateEncounter(patientUuid: String,providerUuid: String, locationUuid: String) : HttpRequestBuilder = {
     http("Update Encounter")
       .post("/openmrs/ws/rest/v1/bahmnicore/bahmniencounter")
-      .body(StringBody(s"""{"patientUuid":"$patientUuid","providerUuids":["$providerUuid"],"includeAll":false,"encounterDateTimeFrom":null,"encounterDateTimeTo":null,"encounterTypeUuids":["$ADMISSION_ENCOUNTER_TYPE_UUID"],"locationUuid":"$locationUuid", "observations":[],"visitTypeUuid":"$VISIT_TYPE_UUID"}"""))
+     // .body(StringBody(s"""{"patientUuid":"$patientUuid","providerUuids":["$providerUuid"],"includeAll":false,"encounterDateTimeFrom":null,"encounterDateTimeTo":null,"encounterTypeUuids":["$ADMISSION_ENCOUNTER_TYPE_UUID"],"locationUuid":"$locationUuid", "observations":[],"visitTypeUuid":"$VISIT_TYPE_UUID"}"""))
+      .body(StringBody(s"""{"patientUuid":"$patientUuid","providerUuids":["$providerUuid"],"includeAll":false,"encounterDateTimeFrom":null,"encounterDateTimeTo":null,"encounterTypeUuids":[null],"locationUuid":"$locationUuid", "observations":[],"visitTypeUuid":"$VISIT_TYPE_UUID"}"""))
       .asJSON
   }
 
@@ -352,6 +353,12 @@ object HttpRequests {
       .post("/openmrs/ws/rest/v1/auditlog")
       .body(StringBody(s"""{"eventType":"USER_LOGOUT_SUCCESS","message":"USER_LOGOUT_SUCCESS_MESSAGE","module":"MODULE_LABEL_LOGOUT_KEY"}"""))
       .asJSON
+  }
+
+  def viewMedications(patientUuid: String): HttpRequestBuilder = {
+    http("viewMedications")
+   .get(s"/openmrs/ws/rest/v1/bahmnicore/drugOrders?includeActiveVisit=true&numberOfVisits=3&patientUuid=$patientUuid")
+      //.queryParam("patientUuid", patientUuid)
   }
 
 }
